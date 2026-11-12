@@ -3,17 +3,14 @@
 > 中国《数据安全法》《个人信息保护法》《网络安全法》三法规则拆解评测
 > 6 个通用模型 + 1 个专业法律助手 Agent + 1 个独立裁判模型 · Harness 隔离编排 · 47 个独立窗口 · 30 份匿名样本 · 6 维评分
 
-> **免责声明**
-> 本仓库是 AI 输出质量的**评估方法与匿名化评测结果**，不构成法律意见，
-> 也不构成对任何模型、平台或供应商的推荐或贬损。法条理解与合规判断请以
-> 官方文本及执业律师意见为准。评测结果与日期、版本、提示词和输入模式高度相关，不可外推为长期结论。
+## 概览
 
-**English abstract.** A blind (identity-blinded) evaluation of how LLMs decompose
-China's Data Security Law, Personal Information Protection Law and Cybersecurity Law
-into reviewable decision trees and executable YAML. 30 anonymized samples,
-a 6-dimension rubric with one-vote-veto for fabricated citations, 47 isolated
-evaluation windows, and same-model dual-mode pairing. Results are descriptive only —
-This is a methodological pilot, not a definitive or statistically powered benchmark.
+| | |
+|---|---|
+| **测什么** | 中国三法条文的规则拆解——决策树、条款映射表、可执行 YAML、覆盖账本 |
+| **怎么测** | 30 份匿名样本 × 6 维加权评分 × 47 个隔离窗口，分数锁定后才揭盲 |
+| **核心发现** | 综合分均分 **70.77**；1 份触发一票否决；双模式配对 **6 : 7**，方向不一致 |
+| **怎么用** | 复用流程看 [`protocol/`](protocol/README.md)，复用 YAML 体检看 [`tools/`](tools/README.md) |
 
 ## 这是什么
 
@@ -29,6 +26,18 @@ This is a methodological pilot, not a definitive or statistically powered benchm
 - 覆盖账本与自检。
 
 公开版只保留方法、评分框架和匿名聚合结果；不公开原始样本、模型身份映射、平台运行日志和完整模型输出。
+
+> **免责声明**
+> 本仓库是 AI 输出质量的**评估方法与匿名化评测结果**，不构成法律意见，
+> 也不构成对任何模型、平台或供应商的推荐或贬损。法条理解与合规判断请以
+> 官方文本及执业律师意见为准。评测结果与日期、版本、提示词和输入模式高度相关，不可外推为长期结论。
+
+**English abstract.** A blind (identity-blinded) evaluation of how LLMs decompose
+China's Data Security Law, Personal Information Protection Law and Cybersecurity Law
+into reviewable decision trees and executable YAML. 30 anonymized samples,
+a 6-dimension rubric with one-vote-veto for fabricated citations, 47 isolated
+evaluation windows, and same-model dual-mode pairing. Results are descriptive only.
+This is a methodological pilot, not a definitive or statistically powered benchmark.
 
 ## 评测架构
 
@@ -160,6 +169,13 @@ DQ 分数只代表半成品参考分，不代表有效交付质量。
 
 其余三张图（六维雷达、输入模式对比、分布箱线）见 [`results/`](results/README.md)。
 
+## 相关文章
+
+- **工程复盘**｜47 个隔离窗口、3.3 亿 Token 是怎么做出来的 —— [掘金](https://juejin.cn/post/7706833656823939098)
+- **发现与结论**｜大模型拆法律条文，最常错在哪 —— [知乎](https://zhuanlan.zhihu.com/p/2104301425626968921)
+
+> 两篇面向不同读者：一篇讲**怎么做**（工程流程与踩坑），一篇讲**发现了什么**（错误类型与结论）。
+
 ## 本仓库包含
 
 ```text
@@ -192,6 +208,36 @@ DQ 分数只代表半成品参考分，不代表有效交付质量。
 ```
 
 > 考点清单只用于覆盖性核对，**不是条款号答案**；判定一律以官方原文为准。
+
+## 如何复用
+
+本仓库不公开原始样本与模型输出，但**量表、协议与工具可以直接拿走用**：
+
+| 你想做的事 | 从哪里开始 |
+|---|---|
+| 复用六维评分量表 | [`rubrics/评分标准_三法通用_v1.0.md`](rubrics/评分标准_三法通用_v1.0.md) |
+| 复用盲评流程（材料投放 / 两层隔离 / 三阶段 / 中断恢复） | [`protocol/README.md`](protocol/README.md) |
+| 复用机械体检脚本 | [`tools/yaml_audit.py`](tools/yaml_audit.py)，用法见 [`tools/README.md`](tools/README.md) |
+| 查看匿名得分与图表 | [`results/`](results/README.md) |
+
+### 最省事的入口：机械体检脚本
+
+如果你在用大模型生成**配置、规则或表单**，最先能复用上的是这个脚本——
+它把"看起来对、实则错"的机械问题全部自动化：
+
+```bash
+pip install pyyaml python-docx
+
+# 在仓库根目录执行
+python tools/yaml_audit.py 你的文件.md --strict --json report.json
+```
+
+> 脚本面向**包含 YAML 代码块的 Markdown 文件**；裸 `.yaml`、JSON 或表单定义需先转成对应格式，否则会读到 0 个块。
+
+它检查：YAML 能否解析、必填字段是否齐全、枚举值是否越界、**条款号是否真实存在**、
+引用是否**逐字**匹配原文、占位符是否残留、`rule_id` 是否重复。
+
+> 它不判断法律推理对错——那部分仍需人工。详见 [`tools/README.md`](tools/README.md)。
 
 ## 不公开内容
 
