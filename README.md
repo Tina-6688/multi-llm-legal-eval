@@ -44,7 +44,7 @@ This is a methodological pilot, not a definitive or statistically powered benchm
 本评测不是单模型跑一次，而是由多层角色和隔离机制组成：
 
 ```text
-拆解侧（7 个）：6 个通用模型 + 1 个法律助手 Agent
+拆解侧（7 个参与项 / 8 种形态）：6 个通用模型 + 1 个法律助手 Agent
 裁判侧（1 个）：独立裁判模型 —— 只评分，不参与拆解、不产出样本
 
 拆解 → 隔离编排 → 匿名样本 → 独立裁判 → 评分锁定 → 身份映射 → 同模型配对
@@ -58,7 +58,7 @@ This is a methodological pilot, not a definitive or statistically powered benchm
 - **1 个机械体检工具（本仓库 [`tools/`](tools/README.md)）**：YAML 可解析性、条款号真伪、quote 逐字、占位符残留的自动核查；
 - **人工复核**：抽查条款号、quote、义务强度、但书、YAML 和覆盖账本。
 
-拆解侧不是简单"跑 7 次"，而是分了两组纵向对照：
+拆解侧不是简单"每个参与项各跑一次"，而是分了两组纵向对照：
 
 - **档位对照**：选取其中一个模型，分别选择两个不同档位参与拆解；
 - **形态对照**：选取其中一个模型，在最高推理档位下分别以**纯对话形态**和**领域 Agent 形态**参与拆解。
@@ -214,7 +214,7 @@ DQ 分数只代表半成品参考分，不代表有效交付质量。
 │   ├── yaml_audit.py                 YAML/条款号/quote/占位符自动核查
 │   └── README.md                     用法与边界说明
 └── results/                        匿名聚合结果
-    ├── 匿名汇总表.csv               30 份样本 × 六维得分 × DQ 标记
+    ├── 匿名汇总表.csv               30 份样本、六维得分、DQ 标记
     ├── figures/                     四张结果图（坐标轴仅样本编号）
     └── README.md                    列说明、统计口径与图
 ```
